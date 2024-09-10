@@ -3,12 +3,12 @@ package Game.project.resources.model.elements;
 public class Card implements ICard{
 	private int value;
 	private int seed;
-	private static final String[] v ={"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
-	private static final String[] s ={"quadri","cuori","fiori","picche"};
+	private static final String[] values ={"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+	private static final String[] seeds ={"quadri","cuori","fiori","picche"};
 	
-	public Card(int v, int s) {//Costruttore
-		this.value = v; 
-		this.seed = s; 
+	public Card(int value, int seed) {//Costruttore
+		this.value = value; 
+		this.seed = seed; 
 	}
 	
 	@Override
@@ -21,7 +21,7 @@ public class Card implements ICard{
 	}
 	@Override
 	public String toString() {
-		String str = v[this.value] + " di " + s[this.seed];
+		String str = values[this.value] + " di " + seeds[this.seed];
 		return str; 
 	}
 

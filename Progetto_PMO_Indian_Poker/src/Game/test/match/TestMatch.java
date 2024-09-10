@@ -1,6 +1,9 @@
 package Game.test.match;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -80,6 +83,11 @@ class TestMatch {
 		match.bid(4);
 		Assert.assertEquals(5, p1.getBid()); // la tassa 1 + 5 la bid
 		Assert.assertNotNull(p2.getBid());
+		
+		assertThrows(BidIncorrectException.class, () -> {
+			match.bid(5);
+        });
+		
 	}
 	// test metodo roundWinner()
 	@Test
