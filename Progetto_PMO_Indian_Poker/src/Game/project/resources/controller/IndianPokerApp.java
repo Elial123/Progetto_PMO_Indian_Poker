@@ -117,15 +117,15 @@ public class IndianPokerApp implements IndianPokerViewObserver{
 	}
 
 	@Override
-	public void bid(int n) {
+	public void bid(int bid) {
 		int bidAndTax;
 		
 		this.clickCount = 1;
 	
 		try {
-			bidAndTax = n + 1;
-			this.model.bid(n);
-			if(n > 0)
+			bidAndTax = bid + 1;
+			this.model.bid(bid);
+			if(bid > 0)
 				this.view.setText("\n"+this.playerName+" ha puntato: "+bidAndTax+" fiches");
 			else
 				this.view.setText("\n"+this.playerName+" ha passato il turno");

@@ -85,44 +85,39 @@ public class IndianPokerViewImpl implements IndianPokerView{
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		// messaggio di controllo
-				frame.addWindowListener((WindowListener) new WindowAdapter(){
-					public void windowClosing(WindowEvent e) {
-						int n = JOptionPane.showConfirmDialog(frame,
-							    "Do you really want to quit?",
-							    "Quitting..", JOptionPane.YES_NO_OPTION);
-						if (n == JOptionPane.YES_OPTION){
-							System.exit(0);
-						}
-					}
-				});
+		frame.addWindowListener((WindowListener) new WindowAdapter(){
+			public void windowClosing(WindowEvent e) {
+				int number = JOptionPane.showConfirmDialog(frame,
+						"Do you really want to quit?",
+					    "Quitting..", JOptionPane.YES_NO_OPTION);
+				if (number == JOptionPane.YES_OPTION){
+					System.exit(0);
+				}
+			}
+		});
 		// azioni pulsanti
-				b1.addActionListener(new ActionListener(){
-					public void actionPerformed(ActionEvent e) {
-						//boolean performed = true;
-						
-							try{
-								//performed = observer.bid(Integer.parseInt(bidPlayer.getText()));
-								observer.bid(Integer.parseInt(bidPlayer.getText()));
-							} catch (NumberFormatException exception){
-								JOptionPane.showMessageDialog(frame, "An integer please..");
-							}
-							/*if(!performed)
-								observer.bid(10);*/
-						
-						
-					}});
-				b3.addActionListener(new ActionListener(){
-					public void actionPerformed(ActionEvent e) {
-						if (confirmDialog("Confirm quitting?","Quit")){
-							observer.quit();
-						}
-					}});
-				b2.addActionListener(new ActionListener(){
-					public void actionPerformed(ActionEvent e) {
-						if (confirmDialog("Confirm Folding?","Fold")){
-							observer.fold();
-						}
-					}});
+		b1.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				//boolean performed = true;
+				try{
+					//performed = observer.bid(Integer.parseInt(bidPlayer.getText()));
+					observer.bid(Integer.parseInt(bidPlayer.getText()));
+				} catch (NumberFormatException exception){
+					JOptionPane.showMessageDialog(frame, "An integer please..");
+				}
+		}});
+		b3.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if (confirmDialog("Confirm quitting?","Quit")){
+					observer.quit();
+				}
+		}});
+		b2.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if (confirmDialog("Confirm Folding?","Fold")){
+					observer.fold();
+				}
+		}});
 				
 		// pannello pEast layout
 		pEast.setBorder(new TitledBorder("Scelte"));
