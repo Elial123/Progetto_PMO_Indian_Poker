@@ -26,6 +26,7 @@ class DealerTest {
 		c = dealer.distribute();
 		Assert.assertNotNull(c);
 	}
+	
 	// test metodo winner()
 	@Test
 	void testWinner() {
@@ -56,6 +57,7 @@ class DealerTest {
 		
 		Assert.assertEquals(-1, dealer.winner(characters));
 	}
+	
 	// test metodo calculateNumberOfFiches()
 	@Test
 	void testcCalculateNumberOfFiches() {
@@ -80,5 +82,10 @@ class DealerTest {
 		Assert.assertEquals(13, p.getFiches());
 		Assert.assertEquals(7, p1.getFiches());
 	}
-
+	
+	// test metodo toString()
+	@Test
+	void testToString() {
+		Assert.assertEquals("Dealer", dealer.toString());
+	}
 }

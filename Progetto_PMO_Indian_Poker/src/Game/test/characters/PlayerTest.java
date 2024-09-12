@@ -55,5 +55,13 @@ class PlayerTest {
 		Assert.assertEquals(c2, player.getSecondCard());
 		Assert.assertNotNull(player.combinationType());
 	}
-
+	
+	// test metodo toString()
+		@Test
+		void testToString() {
+			String str = " Player: "+player.getName()+" numero di fiches: "+player.getFiches()
+					+"\n carte: "+player.getFirstCard();
+			
+			Assert.assertEquals(str, player.toString());
+		}
 }

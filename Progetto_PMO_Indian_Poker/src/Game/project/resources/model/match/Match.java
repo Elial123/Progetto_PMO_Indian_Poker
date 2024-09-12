@@ -81,6 +81,9 @@ public class Match implements IMatch{
 		
 		this.payTaxes();
 		
+		for(int c = 0; c < this.characters.size(); c++) // resetta il fold
+    		this.characters.get(c).setFold(false);
+		
 		i = index;
 		while(count < this.characters.size()) {
 			count = count +1;
@@ -195,8 +198,8 @@ public class Match implements IMatch{
 			}
 		}
 		
-		for(int i = 0; i < this.characters.size(); i++) // resetta il fold
-    		this.characters.get(i).setFold(false);
+		//for(int i = 0; i < this.characters.size(); i++) // resetta il fold
+    		//this.characters.get(i).setFold(false);
 		
     }
 	@Override

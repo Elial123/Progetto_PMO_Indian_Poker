@@ -18,7 +18,6 @@ public class CardTest {
 		card = new Card(value, seed);
     }
 	
-	
 	// test costruttore e metodo getValue()
 	@Test
 	void testGetValue() {
@@ -31,6 +30,7 @@ public class CardTest {
 		Assert.assertEquals(seed, card.getSeed());
 	}
 	
+	// test metodo toString()
 	@Test
 	void testToString() {
 		String[] values ={"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
