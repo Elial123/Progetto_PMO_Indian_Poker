@@ -37,10 +37,12 @@ public class Match implements IMatch{
 		this.characters.get(3).setName("bot3");
 		//System.out.println(this.characters);
 	}
+	
 	@Override
 	public GameTimer getTimer() {
 		return timer;
 	}
+	
 	@Override
 	public void distribution() {
 		// non distribire a chi ha perso
@@ -51,6 +53,7 @@ public class Match implements IMatch{
 		}
 		System.out.println(this.characters);	
 	}
+	
 	@Override
     public String situationPlayer() {
     	String str = new String();
@@ -60,6 +63,7 @@ public class Match implements IMatch{
     		str = str+this.characters.get(i);
 		return str;
 	}
+	
 	@Override
 	public void payTaxes() {
 		for(int i = 0; i < this.characters.size(); i++) {
@@ -67,6 +71,7 @@ public class Match implements IMatch{
 			this.characters.get(i).setBid(1);
 		}
 	}
+	
 	@Override
 	public void fold(int index) {
 		this.characters.get(index).setFold(true);
@@ -132,7 +137,6 @@ public class Match implements IMatch{
 					this.characters.get(i).setBid(0); // sei fuori dalla partita
 					this.fold(i); 
 					// hai perso
-					
 				}
 				
 			}
@@ -153,6 +157,7 @@ public class Match implements IMatch{
 		
 		System.out.println(this.characters);
     }
+	
 	@Override
     public Result roundOver() {
     	
@@ -167,6 +172,7 @@ public class Match implements IMatch{
     	this.dealer.shuffle(); // rimescola le carte
     	return Result.CONTINUE;
     }
+	
 	@Override
     public void roundWinner() {
     	int winnerNumber;
@@ -197,11 +203,8 @@ public class Match implements IMatch{
 			    index = 0; // ricomincio il giro
 			}
 		}
-		
-		//for(int i = 0; i < this.characters.size(); i++) // resetta il fold
-    		//this.characters.get(i).setFold(false);
-		
     }
+	
 	@Override
     public Result gameWinner() {	
     	
