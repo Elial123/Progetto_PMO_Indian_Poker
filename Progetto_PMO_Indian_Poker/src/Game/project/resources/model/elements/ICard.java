@@ -1,7 +1,12 @@
 package Game.project.resources.model.elements;
 
+import Game.project.resources.model.enums.Suits;
+
 public interface ICard {
-	public int getValue();
-	public int getSeed();
+	
+	public Integer getRank();
+	
+	public Suits getSuit();
+	
 	public String toString();
 }
