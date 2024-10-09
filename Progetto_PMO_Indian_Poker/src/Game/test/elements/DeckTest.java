@@ -29,11 +29,10 @@ class DeckTest {
 		if (c == null || c1 == null)
 			fail("fallimento nell'estrazione delle carte");
 		else
-		if (c.getSeed() == c1.getSeed() && c.getValue() == c1.getValue()) {
+		if (c.getSuit() == c1.getSuit() && c.getRank() == c1.getRank()) {
 			fail("carta estratta due volte");
 		}	
 		
 		
 	}
-
 }

@@ -69,9 +69,9 @@ public class Player extends Person implements IPlayer{
 	public int combinationType() {
 		int typeCombination; 
 		
-		if(this.personalCard1.getValue() == this.personalCard2.getValue())
+		if(this.personalCard1.getRank() == this.personalCard2.getRank())
 			typeCombination = 1;
-		else if(this.personalCard1.getSeed() == this.personalCard2.getSeed())
+		else if(this.personalCard1.getSuit() == this.personalCard2.getSuit())
 			typeCombination = 2;
 		else typeCombination = 3;
 		return typeCombination;

@@ -56,24 +56,24 @@ public class Dealer extends Person implements IDealer{
 				if(winnerNumber == -1) {
 					winnerNumber = i;
 					tempPlayerWinner = characters.get(i);
-					maxCardValue = tempPlayerWinner.getFirstCard().getValue();
+					maxCardValue = tempPlayerWinner.getFirstCard().getRank();
 				} 
 				if (tempPlayerWinner.combinationType() > characters.get(i).combinationType()) { // controllo combinazione migliore
 					winnerNumber = i;
 					tempPlayerWinner = characters.get(i);
-					maxCardValue = tempPlayerWinner.getFirstCard().getValue();
+					maxCardValue = tempPlayerWinner.getFirstCard().getRank();
 				} else {
 					if (tempPlayerWinner.combinationType() == characters.get(i).combinationType())	// se stessa combinazione
-						if (maxCardValue < (characters.get(i).getFirstCard().getValue())) { // controllo prima carta max
+						if (maxCardValue < (characters.get(i).getFirstCard().getRank())) { // controllo prima carta max
 							winnerNumber = i;
 							tempPlayerWinner = characters.get(i);
-							maxCardValue = tempPlayerWinner.getFirstCard().getValue();
+							maxCardValue = tempPlayerWinner.getFirstCard().getRank();
 					    } else {
-					    	if (maxCardValue == (characters.get(i).getFirstCard().getValue())) // se stessa prima carta
-					    		if(tempPlayerWinner.getFirstCard().getSeed() < characters.get(i).getFirstCard().getSeed()) { // controllo seme prima carta
+					    	if (maxCardValue == (characters.get(i).getFirstCard().getRank())) // se stessa prima carta
+					    		if(tempPlayerWinner.getFirstCard().getSuit().getPriority() < characters.get(i).getFirstCard().getSuit().getPriority()) { // controllo seme prima carta
 					    			winnerNumber = i; // testare
 					    			tempPlayerWinner = characters.get(i);
-					    			maxCardValue = tempPlayerWinner.getFirstCard().getValue();
+					    			maxCardValue = tempPlayerWinner.getFirstCard().getRank();
 					    		}
 					    }
 				}
