@@ -1,27 +1,31 @@
 package Game.project.resources.model.match;
 
+import java.util.ArrayList;
+
+import Game.project.resources.model.characters.Player;
+import Game.project.resources.model.elements.GameStopwatch;
 import Game.project.resources.model.elements.GameTimer;
 import Game.project.resources.model.enums.Result;
 
 public interface IMatch {
 	
-	public void start(String name);
+	ArrayList<Player> start(String name, boolean choice);
+
+	GameStopwatch getTimer();
 	
-	public GameTimer getTimer();
+	int getTurn();
 	
-	public void distribution();
+	void distribution();
 	
-	public String situationPlayer();
+	ArrayList<Player> situationPlayer();
 	
-	public void payTaxes();
+	void playRound();
 	
-	public void fold(int index);
+	void bid(int b) throws BidIncorrectException;
 	
-	public void bid(int b) throws BidIncorrectException;
+	Result roundOver();
 	
-	public Result roundOver();
+	void roundWinner();
 	
-	public void roundWinner();
-	
-	public Result gameWinner();
+	Result gameWinner();
 }

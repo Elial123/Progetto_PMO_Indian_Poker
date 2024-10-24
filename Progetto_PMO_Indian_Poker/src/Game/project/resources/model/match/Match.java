@@ -2,18 +2,24 @@ package Game.project.resources.model.match;
 
 import Game.project.resources.model.enums.Result;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 import Game.project.resources.model.characters.Dealer;
 import Game.project.resources.model.characters.Player;
-import Game.project.resources.model.elements.GameTimer;
+import Game.project.resources.model.elements.GameStopwatch;
 
 public class Match implements IMatch{
-	/* compongo n persone che implementano IPlayer */
-    private ArrayList<Player> characters;
-	private GameTimer timer;
+	
+	private ArrayList<Player> characters,
+	                          supportList;
+	private boolean pairMode,
+	hasBet;
+	private GameStopwatch gameStopwatch;
 	private int rounds;
 	private int index; // salva chi ha iniziato il turno prec
-	private Dealer dealer;  
+	private Dealer dealer; 
 
 	/* costruttore della classe */
 	public Match(final Dealer dealer, final Player p1, final Player p2, final Player p3, final Player p4) {
@@ -39,43 +45,81 @@ public class Match implements IMatch{
 	}
 	
 	@Override
-	public GameTimer getTimer() {
-		return timer;
+	public GameStopwatch getTimer() {
+		return gameStopwatch;
 	}
 	
 	@Override
+	public int getTurn() {
+		return this.index;
+	}
+	
+	//@Override
 	public void distribution() {
+		
 		// non distribire a chi ha perso
 		for(int i = 0; i < this.characters.size(); i++) {
-			System.out.println("\ncarte di "+this.characters.get(i).getName()+": ");
-			this.characters.get(i).setFirstCard(dealer.distribute());
-			this.characters.get(i).setSecondCard(dealer.distribute());
+			this.characters.get(i).setHand(this.dealer.distribute(), this.dealer.distribute());
+			System.out.println("\ncarte di "+this.characters.get(i).getName()+": "+
+					this.characters.get(i).getHand());
 		}
 		System.out.println(this.characters);	
 	}
 	
 	@Override
-    public String situationPlayer() {
+    public ArrayList<Player> situationPlayer() {
+		// dovrà restituire una lista di 4 player
+		// dovra valutare se non sei tu ha puntare per primo e
+		// aggiornare le bid dei player che hanno il turno prima del tuo
     	String str = new String();
     	
-    	str = this.characters.get(0).toString()+", "+this.characters.get(0).getSecondCard();
+    	str = this.characters.get(0).toString()+" carte"+this.characters.get(0).getHand()+", ";
     	for(int i = 1; i < this.characters.size(); i++)
-    		str = str+this.characters.get(i);
-		return str;
+    		str = str+this.characters.get(i)+" carte"+this.characters.get(i).getHand()+", ";
+		//return str;
+    	ArrayList<Player> list = this.characters;
+    	System.out.println(str);
+    	return list;
 	}
 	
-	@Override
-	public void payTaxes() {
+	private void payTaxes() {
 		for(int i = 0; i < this.characters.size(); i++) {
 			System.out.println("\n"+this.characters.get(i).getName()+" paga tassa...");
 			this.characters.get(i).setBid(1);
 		}
 	}
 	
-	@Override
-	public void fold(int index) {
+	private void fold(int index) {
 		this.characters.get(index).setFold(true);
 		System.out.println("\n"+this.characters.get(index).getName()+" passa...");
+	}
+	
+	@Override
+	public void playRound() {
+		
+		this.hasBet = false;
+		
+		this.payTaxes();
+
+		// Resetta il fold per ogni personaggio
+		for (int c = 0; c < this.characters.size(); c++) {
+		    this.characters.get(c).setFold(false);
+		}
+		
+		/*for(int i = 0 ; i < this.characters.size(); i++)
+    		this.characters.get(i).setBid(0);*/
+		
+		if(index > 0) {
+			for(int i = index; i<this.characters.size(); i++)
+				if (this.characters.get(i).getFiches() >= 2)
+					this.characters.get(i).makeMove(characters);
+				else {
+		    		this.characters.get(i).setBid(0); // sei fuori dalla partita
+					this.fold(i); 
+					// hai perso
+		    	}
+		}
+		
 	}
 	
 	@Override
@@ -206,46 +250,51 @@ public class Match implements IMatch{
     }
 	
 	@Override
-    public Result gameWinner() {	
+    public Result gameWinner() {
     	
-    	int winnerID = 0, 
-    		drewerID = 0, 
-    		fichesWinner = this.characters.get(0).getFiches();
-    	
-    	// ricerca vincitore 
-    	for(int i = 0; i < this.characters.size() - 1; i++) {	// da 0 a 2
-			if(fichesWinner < this.characters.get(i+1).getFiches())
-			{
-				//System.out.println("-----fiches: "+fichesWinner);
-				fichesWinner = this.characters.get(i+1).getFiches();
-				winnerID = i+1;
-				//System.out.println("-----vincitore: "+winnerID);
-			}
-			
-	     }
-    	
-    	System.out.println("viches vincitore: "+fichesWinner);
-    	System.out.println("numero vincitore: "+winnerID);
-    	
-    	// ricerca eventuale pareggio
-    	if (winnerID == 0)
-    		for(int i = 1; i < this.characters.size(); i++) {	
-				if(fichesWinner == this.characters.get(i).getFiches()) {
-					drewerID = i;
-				}	
-		     }
-    	// restituzione risultato
-    	if(winnerID == 0) {
-    		if(drewerID != 0) {
-    			return Result.YOU_DREW;
-    		}
-    		else {
-    			return Result.YOU_WON;
-    		}
-    	} else 
-    		return Result.YOU_lOST;
-    		
+    	List<Player> winners = new ArrayList<>();
+    	 // Trova il giocatore con il maggior numero di fiches
+        Optional<Player> winner = this.characters.stream()
+        		.max(Comparator.comparingInt(Player::getFiches));
+
+        if (winner.isPresent()) {
+            winners = this.characters.stream()
+            		.filter(p -> p.getName() != winner.get().getName())
+            		.filter(p -> p.getFiches() == winner.get().getFiches())
+                    .toList();
+        } else {
+            System.out.println("Non ci sono giocatori.");
+        }
+        
+        if(!this.pairMode) {
+    		if(winner.get().getName() == this.supportList.get(0).getName()) {
+        		if(winners.size() != 0) {
+        			return Result.YOU_DREW;
+        		}
+        		else {
+        			return Result.YOU_WON;
+        		}
+        	} else 
+        		return Result.YOU_lOST;
+    	} else {
+    		if(winner.get().getName() == this.supportList.get(0).getName() ||
+    		   winner.get().getName() == this.supportList.get(1).getName()) {
+    			
+    			if(winners.contains(this.supportList.get(2)) || 
+    			   winners.contains(this.supportList.get(3))) {
+    				
+        			return Result.YOU_DREW;
+        		}
+        		else {
+        			return Result.YOU_WON;
+        		}
+    		} else 
+        		return Result.YOU_lOST;	
+    	}
+        
+    	// Nota: per vincere alla fine non basta che il partner vinca, ma devi anche rimanere in partita
+    	// se non hai le fiches per rimanere in partita allora non puoi vincere
+    	// qui vale lo stesso discorso
     }
-	
 
 }
