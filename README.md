@@ -9,7 +9,8 @@
 ## Analisi del Problema :
 Specifica del Problema:<br>
 <br>
-L'applicazione da noi sviluppata è un gioco singolo utente, l'obbiettivo di questultimo è accumulare il maggior numero di fiches possibile.<br>
+L'applicazione da noi sviluppata è un gioco singolo utente con 2 modalità di gioco disponibili, l'obbiettivo di questultimo è accumulare il maggior numero di fiches possibile.<br>
+Un utente può scegliere se giocare tutti contro tutti o a coppie.<br>
 La partita è composta da 10 round ognuno con un tempo di 15 secondi, in questi round il giocatore dovrà osservare le carte visibili dei bot e determinare se con la sua mano (coppia di carte)
 li convine passare o puntare. <br>
 Per poter continuare a stare in partita devi pagare una fiches di tassa all'inizio di ogni round e per poter continuare a giocatre devi avere almeno 2 fiches altrimenti si viene eliminati.<br>
