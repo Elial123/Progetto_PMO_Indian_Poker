@@ -207,12 +207,16 @@ public class Match implements IMatch{
     	
     	if(this.characters.get(0).getFiches() <= 1) // se user non ha più fiches
     		return Result.YOU_lOST;
-    	if(this.characters.size() == 1) // se user è rimasto solo in partita
+    	if(this.characters.size() == 1 || // se user è rimasto solo in partita
+    	   (this.characters.size() == 2 && 
+    	   this.characters.get(1).getName().equals("bot1") && 
+    	   this.pairMode)) 				  // o user e bot1 restano soli
     		return Result.YOU_WON;
     	
     	this.rounds--;
     	System.out.println("\nrounds rimanenti: "+this.rounds);
     	
+    	//this.dealer.r
     	this.dealer.shuffle(); // rimescola le carte
     	return Result.CONTINUE;
     }
@@ -248,6 +252,7 @@ public class Match implements IMatch{
 			}
 		}
     }
+	
 	
 	@Override
     public Result gameWinner() {
