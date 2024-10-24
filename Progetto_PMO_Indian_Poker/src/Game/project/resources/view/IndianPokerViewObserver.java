@@ -13,4 +13,8 @@ public interface IndianPokerViewObserver {
 	void fold();
 	
 	void quit();
+
+	void setMod(boolean pair);
+
+	boolean getMod();
 }
