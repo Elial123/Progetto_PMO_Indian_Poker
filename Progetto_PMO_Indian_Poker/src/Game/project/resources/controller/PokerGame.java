@@ -106,43 +106,60 @@ public class PokerGame implements IndianPokerViewObserver{
 		
 	}
 	
-	private String game(int time) {
-		
-		if (time != this.precTime) {
-			//this.model.payTaxes(); // pagano tasse
-			try {
-				if (this.clickCount == 0) // paga tassa se non scegle
-					this.model.bid(0);
-				else 
-					this.clickCount = 0;
-			} catch (BidIncorrectException e) {
-				System.out.println("\n numero inserito non corretto");
-				this.view.numberIncorrect();
-			}
-			
-			this.model.roundWinner();
-			result = this.model.roundOver();
-			if(result != Result.CONTINUE) {
-				this.view.result(result);// passo il risultato alla view
-				this.quit();
-			}
-				
-			System.out.println("time: "+time);
-			if(time != 0)
-				this.model.distribution();
-			this.precTime = time;
-			
-			
-			if(time == 0) {
-				result = this.model.gameWinner();
-			    System.out.println("risultato partita: "+result);
-			    this.view.result(result);// passo il risultato alla view
-			    this.quit();
-			}
+	private ArrayList<Player> game(long time) {
+		ArrayList<Player> players = new ArrayList<Player>();
+		try {
+			if (this.clickCount == 0) // paga tassa se non scegle
+				this.model.bid(0);
+			else 
+				this.clickCount = 0;
+		} catch (BidIncorrectException e) {
+			System.out.println("\n numero inserito non corretto");
+			this.view.numberIncorrect(e.getMessage());
 		}
-		return this.model.situationPlayer();
+		
+		this.model.roundWinner();
+		result = this.model.roundOver();
+		players = this.model.situationPlayer();
+		if(result != Result.CONTINUE) {
+			this.view.result(result);// passo il risultato alla view
+			this.precTime = 151; // esce dal loop
+			return players; // Interrompe ulteriori operazioni dopo aver mostrato il risultato.
+		}
+		
+			
+		System.out.println("time: "+time);
+		if(time == 151) {
+			result = this.model.gameWinner();
+		    System.out.println("risultato partita: "+result);
+		    this.view.result(result);// passo il risultato alla view
+		    return players; // Interrompe ulteriori operazioni dopo aver mostrato il risultato.
+		}			
+		return players;
 	}
 	
+	private void updatePlayersView(List<Player> list, boolean showdown) {
+	    for (int i = 0; i < list.size(); i++) {
+	        String name = list.get(i).getName();
+	        int fiches = list.get(i).getFiches();
+	        int bid = list.get(i).getBid();
+	        boolean fold = list.get(i).getFold();
+	        String card1 = list.get(i).getHand().getCards().get(0).toString();
+	        String card2 = (showdown || i == 0 || (i == 1 && list.get(i).getName().equals("bot1") && this.mode)) ? 
+	        		list.get(i).getHand().getCards().get(1).toString() 
+	        		: "img/Carta-Coperta.jpg";
+
+	        this.view.updatePlayer(i, name, fiches, bid, fold, card1, card2);
+	    }
+	}
+	
+	private void outOfOrder(List<Player> list) {
+		if(list.size() < 4)
+			for(int i = list.size(); i < 4; i++) {
+				this.view.updatePlayer(i, "fuori commissione", 0, 0, false,
+						"img/Carta-Coperta.jpg", "img/Carta-Coperta.jpg");
+			}
+	}
 	@Override
 	public String getName() {
 		return this.playerName;
