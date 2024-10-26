@@ -165,8 +165,7 @@ public class PokerGameView extends JFrame implements IPokerGameView {
 
 	@Override
 	public void result(Result res) {
-	    /*JOptionPane.showMessageDialog(this, messages.get(res),
-	                                  "Result",JOptionPane.PLAIN_MESSAGE);*/
+	   
 		String message = messages.get(res);
 	    // Prima apriamo la nuova finestra
 	    new MatchResult(message);
@@ -219,10 +218,10 @@ public class PokerGameView extends JFrame implements IPokerGameView {
             setLayout(new BorderLayout());
             nameLabel = new JLabel(playerName);
             nameLabel.setFont(new Font("Arial", Font.BOLD, 24));
-            nameLabel.setForeground(Color.GREEN);
+            nameLabel.setForeground(new Color(144, 238, 144)); // verde chiaro
             chipsLabel = new JLabel("Chips: " + chips);
             chipsLabel.setFont(new Font("Arial", Font.BOLD, 20));
-            chipsLabel.setForeground(Color.RED);
+            chipsLabel.setForeground(new Color(255, 182, 103)); // arancione chiaro
             cardLabel1 = new JLabel(new ImageIcon(cardImagePath1));
             cardLabel2 = new JLabel(new ImageIcon(cardImagePath2));
 
@@ -235,7 +234,7 @@ public class PokerGameView extends JFrame implements IPokerGameView {
 
             LineBorder border = new LineBorder(Color.RED, 5);
             setBorder(border);
-            cardsPanel.setBackground(Color.DARK_GRAY);
+            cardsPanel.setBackground(new Color(0, 100, 0, 150)); // colore verde scuro con trasparenza
             setBackground(Color.BLACK);
         }
 
