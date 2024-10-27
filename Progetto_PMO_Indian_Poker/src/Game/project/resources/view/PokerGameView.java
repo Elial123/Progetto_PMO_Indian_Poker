@@ -36,14 +36,14 @@ public class PokerGameView extends JFrame implements IPokerGameView {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         
-        // imposta cursore
+        // Imposta cursore
         Cursor cursore = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
         setCursor(cursore);
         
         // Imposta lo sfondo del JFrame a nero
         getContentPane().setBackground(Color.BLACK);
 
-        // Carica l'immagine di sfondo
+        // Carica l'immagine di sfondo dei PlayerPanel
         backgroundImage = new ImageIcon("img/poker.jpg").getImage();
 
         timeLabel = new JLabel("Tempo: 00:00", SwingConstants.CENTER);
@@ -51,7 +51,7 @@ public class PokerGameView extends JFrame implements IPokerGameView {
         timeLabel.setForeground(Color.RED);
         add(timeLabel, BorderLayout.NORTH);
 
-        // Creazione del pannello per i giocatori
+        // Creazione del pannello per i player giocanti
         JPanel playersPanel = new JPanel();
         playersPanel.setLayout(new GridLayout(2, 2));
         playerPanels = new PlayerPanel[4];
@@ -63,19 +63,40 @@ public class PokerGameView extends JFrame implements IPokerGameView {
 
         // Creazione del pannello per i pulsanti
         JPanel buttonsPanel = new JPanel();
-        // Imposta lo sfondo del buttonsPanel a nero
+        buttonsPanel.setLayout(new GridLayout(1, 3));  // 1 riga, 3 colonne
         buttonsPanel.setBackground(Color.BLACK);
-        betButton = new JButton("Puntare");
-        betButton.setBackground(Color.GREEN);
-        foldButton = new JButton("Foldare");
-        foldButton.setBackground(Color.CYAN);
-        quitButton = new JButton("Quitare");
-        quitButton.setBackground(Color.RED);
+        
+        // Aggiunta margine per distanziare il pannello dal blocco precedente
+        buttonsPanel.setBorder(BorderFactory.createEmptyBorder(8, 0, 5, 0));  // Distanza 8px sopra e 5px sotto
 
+        // Creazione e configurazione dei pulsanti
+        betButton = new JButton(new ImageIcon("img/button.png"));
+        configureButton(betButton, Color.GREEN);
+        JLabel betLabel = new JLabel("Puntare", SwingConstants.CENTER);
+        betLabel.setForeground(Color.WHITE);
+        betButton.setLayout(new BorderLayout());
+        betButton.add(betLabel, BorderLayout.NORTH);
+
+        foldButton = new JButton(new ImageIcon("img/button.png"));
+        configureButton(foldButton, Color.CYAN);
+        JLabel foldLabel = new JLabel("Foldare", SwingConstants.CENTER);
+        foldLabel.setForeground(Color.WHITE);
+        foldButton.setLayout(new BorderLayout());
+        foldButton.add(foldLabel, BorderLayout.NORTH);
+
+        quitButton = new JButton(new ImageIcon("img/button.png"));
+        configureButton(quitButton, Color.RED);
+        JLabel quitLabel = new JLabel("Quittare", SwingConstants.CENTER);
+        quitLabel.setForeground(Color.WHITE);
+        quitButton.setLayout(new BorderLayout());
+        quitButton.add(quitLabel, BorderLayout.NORTH);
+
+        // Aggiunta dei pulsanti al pannello
         buttonsPanel.add(betButton);
         buttonsPanel.add(foldButton);
         buttonsPanel.add(quitButton);
-
+        
+        // Aggiunta del pannello dei pulsanti al frame
         add(buttonsPanel, BorderLayout.SOUTH);
 
         // Event listener per il pulsante "Puntare"
@@ -83,11 +104,11 @@ public class PokerGameView extends JFrame implements IPokerGameView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String betAmount = JOptionPane.showInputDialog("Inserisci l'importo della puntata:");
-             // Prova a convertire l'input in un intero
+                // Prova a convertire l'input in un intero
                 try {
                     int numeroIntero = Integer.parseInt(betAmount);
                     observer.bid(numeroIntero);
-                } catch (NumberFormatException exception) {
+                } catch (NumberFormatException exception) { // se ha fallito -> Errore
                     JOptionPane.showMessageDialog(null, "Errore: Inserisci un numero intero valido!");
                 }
                 // Implementare la logica per gestire la puntata
@@ -114,7 +135,16 @@ public class PokerGameView extends JFrame implements IPokerGameView {
             }
         });
     }
+	
+	// Metodo per configurare i pulsanti
+	private void configureButton(JButton button, Color backgroundColor) {
+	    button.setFocusPainted(false);
+	    button.setContentAreaFilled(false);
+	    button.setBorderPainted(false);
+	    button.setBackground(backgroundColor);
+	}
     
+	// Metodo di start della view
 	@Override
 	public void start(){
 		// schermata di start
@@ -133,7 +163,6 @@ public class PokerGameView extends JFrame implements IPokerGameView {
 		else
 			pair = false;
 		observer.setMod(pair);
-		// in base a questo il metodo situationPlayer() del match...lui restitura roba corretta di conseguenza
 		
 		JOptionPane.showMessageDialog(this, "Ci sono 10 round, ognuno di essi dura: 15s.\n"
 				+ "All'inizio di ogni turno dovrai pagare una tassa (1 fiches),"
@@ -147,22 +176,26 @@ public class PokerGameView extends JFrame implements IPokerGameView {
 		this.setVisible(true);
 	}
 	
+	// Metodo che conferma l'inserimento della scelta di modalità da parte dell'utente
 	private boolean confirmDialog(String question, String name){
 		return JOptionPane.showConfirmDialog(this,question,name,JOptionPane.YES_NO_OPTION) 
 				== JOptionPane.YES_OPTION;
 	}
 	
+	// Metodo che setta l'observer
 	@Override
 	public void setObserver(IndianPokerViewObserver observer){
 		this.observer = observer;
 	}
 	
+	// Metodo che segnala errore durante l'inserimento al giocatore
 	@Override
 	public void numberIncorrect(String ms) {
 		JOptionPane.showMessageDialog(this, ms, 
 				"Incorrect Number", JOptionPane.ERROR_MESSAGE);
 	}
-
+	
+	// Metodo che stampa il risultato della partita
 	@Override
 	public void result(Result res) {
 	   
@@ -187,6 +220,7 @@ public class PokerGameView extends JFrame implements IPokerGameView {
         }
     }
     
+	// Metodo per aggiornare i turni
 	@Override
     public void updateTurn(int index) {
     	for(int i = 0; i < playerPanels.length; i++)
@@ -196,6 +230,7 @@ public class PokerGameView extends JFrame implements IPokerGameView {
     			playerPanels[i].setBorder(new LineBorder(Color.RED, 5));
     }
     
+	// Metodo che esegue il controllo degli indici
     private boolean indexControle(int index) {
     	if (index >= 0 && index < playerPanels.length)
     		return true;
@@ -217,11 +252,13 @@ public class PokerGameView extends JFrame implements IPokerGameView {
         public PlayerPanel(String playerName, int chips, String cardImagePath1, String cardImagePath2) {
             setLayout(new BorderLayout());
             nameLabel = new JLabel(playerName);
-            nameLabel.setFont(new Font("Arial", Font.BOLD, 24));
+            nameLabel.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 24)); // misto di due stili
             nameLabel.setForeground(new Color(144, 238, 144)); // verde chiaro
+            
             chipsLabel = new JLabel("Chips: " + chips);
             chipsLabel.setFont(new Font("Arial", Font.BOLD, 20));
             chipsLabel.setForeground(new Color(255, 182, 103)); // arancione chiaro
+      
             cardLabel1 = new JLabel(new ImageIcon(cardImagePath1));
             cardLabel2 = new JLabel(new ImageIcon(cardImagePath2));
 
@@ -245,7 +282,8 @@ public class PokerGameView extends JFrame implements IPokerGameView {
             cardLabel1.setIcon(new ImageIcon(cardImagePath1));
             cardLabel2.setIcon(new ImageIcon(cardImagePath2));
         }
-
+        
+        // Metodo per disegnare i componenti del PlayerPanel
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
