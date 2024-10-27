@@ -7,5 +7,7 @@ public class BidIncorrectException extends Exception{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public BidIncorrectException() {}
+	public BidIncorrectException(String message) {
+		super(message);
+	}
 }

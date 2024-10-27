@@ -1,6 +1,5 @@
 package Game.project.resources.model.match;
 
-import Game.project.resources.model.enums.Result;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -9,13 +8,15 @@ import java.util.Optional;
 import Game.project.resources.model.characters.Dealer;
 import Game.project.resources.model.characters.Player;
 import Game.project.resources.model.elements.GameStopwatch;
+import Game.project.resources.model.enums.Result;
 
-public class Match implements IMatch{
-	
-	private ArrayList<Player> characters,
-	                          supportList;
-	private boolean pairMode,
-	hasBet;
+public class Match implements IMatch {
+	/* compongo n persone che implementano IPlayer */
+    private ArrayList<Player> characters,
+    						  supportList;
+    
+    private boolean pairMode,
+    				hasBet;
 	private GameStopwatch gameStopwatch;
 	private int rounds;
 	private int index; // salva chi ha iniziato il turno prec
@@ -24,24 +25,39 @@ public class Match implements IMatch{
 	/* costruttore della classe */
 	public Match(final Dealer dealer, final Player p1, final Player p2, final Player p3, final Player p4) {
 		this.characters = new ArrayList<Player>();
-		this.timer = new GameTimer();
+		this.gameStopwatch = new GameStopwatch();
 		this.characters.add(p1);
 		this.characters.add(p2);
 		this.characters.add(p3);
 		this.characters.add(p4);
+		
+		this.supportList = new ArrayList<Player>(this.characters);
+		
 		this.index = 0;	// comincia lo user
 		this.dealer = dealer;
+		this.pairMode = false;
+		this.hasBet = false;
 		this.rounds = 10;
 	}
 	
 	@Override
-	public void start(String name) {
+	public ArrayList<Player> start(String name, boolean choice) {
+		this.pairMode = choice;
 		// assegnazione nomi
 		this.characters.get(0).setName(name);
+		this.characters.get(0).setChoice(choice);
+		
 		this.characters.get(1).setName("bot1");
+		this.characters.get(1).setChoice(choice);
+		
 		this.characters.get(2).setName("bot2");
+		this.characters.get(2).setChoice(choice);
+		
 		this.characters.get(3).setName("bot3");
+		this.characters.get(3).setChoice(choice); 
 		//System.out.println(this.characters);
+		ArrayList<Player> list = this.characters;
+    	return list;
 	}
 	
 	@Override
@@ -54,7 +70,7 @@ public class Match implements IMatch{
 		return this.index;
 	}
 	
-	//@Override
+	@Override
 	public void distribution() {
 		
 		// non distribire a chi ha perso
@@ -125,81 +141,70 @@ public class Match implements IMatch{
 	@Override
     public void bid(int b) throws BidIncorrectException{ // in caso di errore serve il throw (che dovrai implementare)
 		int bidOfPlayer = 0;
-		int count = 0,
-			i;
-		
-		this.payTaxes();
-		
-		for(int c = 0; c < this.characters.size(); c++) // resetta il fold
-    		this.characters.get(c).setFold(false);
-		
-		i = index;
-		while(count < this.characters.size()) {
-			count = count +1;
-			
-			// distingui bot da user
-			if(i == 0) {
-				bidOfPlayer = b; // bid dello user
-				
-				if(this.characters.get(i).getFiches() >= 2) { // se puoi pagare
-					if(b > 4 || b < 0) {
-						this.characters.get(i).setBid(this.characters.get(i).getBid() + 0);
-						this.fold(0);
-						throw new BidIncorrectException();
-					} else {
-						if(this.characters.get(0).getFiches() < b + 1) { // bid + tassa < fiches
-							this.characters.get(i).setBid(this.characters.get(i).getBid() + 0);
-							this.fold(0);
-							throw new BidIncorrectException();
-						} else {
-							this.characters.get(i).setBid(this.characters.get(i).getBid() + b); // [1, 5]
-						}
-					}
-			
-				} else {
-					// non hai fiches sufficenti per continuare
-					this.characters.get(i).setBid(0);
-				}
+		int count = 0;
 
-				if(bidOfPlayer == 0)
-					this.fold(0);
-			} else {
-				
-				if(this.characters.get(i).getFiches() >= 2) { // se hai ancora sufficenti fiches
-					if(this.characters.get(i).getFiches() >= 5) {
-						bidOfPlayer = (int)(Math.random() * (4 - 0)) + 0; // [0, 4] 
-						this.characters.get(i).setBid(this.characters.get(i).getBid() + bidOfPlayer); // [1, 5] o [firstBid, 5]
-					} else {
-					    bidOfPlayer = (int)(Math.random() * ((this.characters.get(i).getFiches()-1) - 0)) + 0; // [0, fiches - 1]
-						this.characters.get(i).setBid(this.characters.get(i).getBid() + bidOfPlayer);// [0, fiches]
-					}
-					
-					if(bidOfPlayer == 0) {
-						this.fold(i);
-					}
-				} else {
-					this.characters.get(i).setBid(0); // sei fuori dalla partita
+		int i = index;
+		while (count < this.characters.size()) {
+		    // Incrementa il conteggio
+		    count++;
+		    
+		    // Distingui bot da user
+		    if (i == 0) {
+		        bidOfPlayer = b; // Bid dello user
+
+		        // Verifica se il giocatore ha fiches sufficienti
+		        if(this.hasBet)
+		        	throw new BidIncorrectException("Bid già inserita!");
+		        else if (this.characters.get(i).getFiches() >= 2) {
+		            // Controlla se il bid è valido
+		            if (b > 4 || b < 0) {
+		                this.characters.get(i).setBid(+this.characters.get(i).getBid());
+		                this.fold(0);
+		                this.hasBet = false;
+		                throw new BidIncorrectException("Il numero inserito non è tra 0 e 4!");
+		            } else if (this.characters.get(i).getFiches() < b + 1) { 
+		                this.characters.get(i).setBid(+this.characters.get(i).getBid());
+		                this.fold(0);
+		                this.hasBet = false;
+		                throw new BidIncorrectException("Il numero inserito è più grande del numero delle tue fiches!");
+		            } else {
+		            	this.hasBet = true;
+		                this.characters.get(i).setBid(b+this.characters.get(i).getBid()); // add tassa
+		            }
+		        } else {
+		            // Non hai fiches sufficienti per continuare
+		            this.characters.get(i).setBid(0);
+		        }
+
+		        // Gestisci il fold in base al bid
+		        if (bidOfPlayer == 0) {
+		            this.fold(0);
+		        }
+
+		        System.out.println(this.characters.get(i).getName() + " ha puntato: " +
+		                           this.characters.get(i).getBid());
+		    } else {
+		    	if(this.characters.get(i).getFiches() >= 2) {
+		    		if(this.characters.get(i).getBid() == 1 && !this.characters.get(i).getFold()) // se non ha ancora puntato
+		    			this.characters.get(i).makeMove(characters); // Logica per la puntata del bot
+		    	} else {
+		    		this.characters.get(i).setBid(0); // sei fuori dalla partita
 					this.fold(i); 
 					// hai perso
-				}
-				
-			}
+		    	}
+		    }
 
-			
-			System.out.println(this.characters.get(i).getName()+" ha puntato: "+
-							   this.characters.get(i).getBid());
-			if(i < this.characters.size() - 1)
-				i++;
-			else
-				i = 0;
+
+		    // Aggiorna l'indice per il prossimo giocatore
+		    i = (i + 1) % this.characters.size(); // Ciclo tra i personaggi
 		}
-		// cambia il player che punta per primo
-		if(this.index < this.characters.size() - 1)
-			index++;
-		else
-			index = 0;
+
+		// Cambia il player che punta per primo
+		index = (index + 1) % this.characters.size();
 		
-		System.out.println(this.characters);
+		
+		
+
     }
 	
 	@Override
@@ -253,7 +258,6 @@ public class Match implements IMatch{
 		}
     }
 	
-	
 	@Override
     public Result gameWinner() {
     	
@@ -262,7 +266,7 @@ public class Match implements IMatch{
         Optional<Player> winner = this.characters.stream()
         		.max(Comparator.comparingInt(Player::getFiches));
 
-        if (winner.isPresent()) {
+        if (winner.isPresent()) { // se vincitore è presente cerca casi di pareggio
             winners = this.characters.stream()
             		.filter(p -> p.getName() != winner.get().getName())
             		.filter(p -> p.getFiches() == winner.get().getFiches())
@@ -271,9 +275,9 @@ public class Match implements IMatch{
             System.out.println("Non ci sono giocatori.");
         }
         
-        if(!this.pairMode) {
-    		if(winner.get().getName() == this.supportList.get(0).getName()) {
-        		if(winners.size() != 0) {
+        if(!this.pairMode) { // controllo mod
+    		if(winner.get().getName() == this.supportList.get(0).getName()) { // conttrollo vincitore
+        		if(winners.size() != 0) { // controllo pareggio
         			return Result.YOU_DREW;
         		}
         		else {
@@ -281,12 +285,12 @@ public class Match implements IMatch{
         		}
         	} else 
         		return Result.YOU_lOST;
-    	} else {
+    	} else { // confronto nome vincitore con i due partner
     		if(winner.get().getName() == this.supportList.get(0).getName() ||
     		   winner.get().getName() == this.supportList.get(1).getName()) {
     			
     			if(winners.contains(this.supportList.get(2)) || 
-    			   winners.contains(this.supportList.get(3))) {
+    			   winners.contains(this.supportList.get(3))) { // controllo presenza di paregio
     				
         			return Result.YOU_DREW;
         		}
@@ -301,5 +305,4 @@ public class Match implements IMatch{
     	// se non hai le fiches per rimanere in partita allora non puoi vincere
     	// qui vale lo stesso discorso
     }
-
 }
