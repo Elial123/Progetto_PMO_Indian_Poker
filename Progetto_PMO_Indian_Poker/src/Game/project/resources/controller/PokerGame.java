@@ -1,20 +1,20 @@
 package Game.project.resources.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import Game.project.resources.model.characters.BotPlayer;
+import Game.project.resources.model.characters.Dealer;
+import Game.project.resources.model.characters.HumanPlayer;
+import Game.project.resources.model.elements.GameStopwatch;
+import Game.project.resources.model.enums.Result;
 import Game.project.resources.model.match.BidIncorrectException;
 import Game.project.resources.model.match.Match;
 import Game.project.resources.view.IndianPokerViewObserver;
 import Game.project.resources.view.PokerGameView;
-import Game.project.resources.model.enums.Result;
-import java.util.ArrayList;
-import java.util.List;
-import Game.project.resources.model.characters.BotPlayer;
-import Game.project.resources.model.characters.Dealer;
-import Game.project.resources.model.characters.HumanPlayer;
 import Game.project.resources.model.characters.Player;
-import Game.project.resources.model.elements.GameStopwatch;
 
 public class PokerGame implements IndianPokerViewObserver{
-	
 	private final Match model;
 	private final PokerGameView view;
 	
@@ -25,7 +25,7 @@ public class PokerGame implements IndianPokerViewObserver{
     private Result result;
     private int precTime;
 	
-    public PokerGame() {
+	public PokerGame() {
 		this.clickCount = 0;
 		this.mode = false;
 		this.model = new Match(Dealer.getInstance(), new HumanPlayer(), new BotPlayer(), new BotPlayer(), new BotPlayer()); 
@@ -56,9 +56,6 @@ public class PokerGame implements IndianPokerViewObserver{
         			this.updatePlayersView(list, false);
         		}
         			
-        			//this.view.setText(this.model.situationPlayer());
-        		/*if(precTime == 16 || precTime == 31 || precTime == 46 || precTime == 61 || precTime == 76
-        			|| precTime == 91 || precTime == 106 || precTime == 121 || precTime == 136 || precTime == 151)*/
         		if((precTime - 16) % 15 == 0 && precTime >= 16 && precTime <= 151) {
         			
         			System.out.println("\nshowdown-------------------------------------\n");
@@ -79,8 +76,8 @@ public class PokerGame implements IndianPokerViewObserver{
         			gameStopwatch.start();
         		}
         		
-        		if(precTime == 17 || precTime == 32 || precTime == 47 || precTime == 62 || precTime == 77
-        		   || precTime == 92 || precTime == 107 || precTime == 122 || precTime == 137) {
+        		if(precTime == 17 || precTime == 32 || precTime == 47 || precTime == 62 || precTime == 77 
+        				|| precTime == 92 || precTime == 107 || precTime == 122 || precTime == 137) {
         			
         			System.out.println("\ngame------------------------------------");
         			
@@ -156,37 +153,40 @@ public class PokerGame implements IndianPokerViewObserver{
 						"img/Carta-Coperta.jpg", "img/Carta-Coperta.jpg");
 			}
 	}
+	
 	@Override
 	public String getName() {
 		return this.playerName;
 	}
 	
 	@Override
+	public boolean getMod() {
+		return this.mode;
+	}
+	
+	@Override
+	public void setMod(boolean pair) {
+		this.mode = pair;
+		
+	}
+	
+	@Override
 	public void setName(String name) {
 		System.out.println(name);
-		if(name != null)
+		if(name != null && !name.isBlank())
 			this.playerName = name;
 		else
-			this.playerName = "giocatore";
+			this.playerName = "Giocatore";
 	}
 
 	@Override
 	public void bid(int bid) {
-		int bidAndTax;
-		
 		this.clickCount = 1;
-	
 		try {
-			bidAndTax = bid + 1;
 			this.model.bid(bid);
-			if(bid > 0)
-				this.view.setText("\n"+this.playerName+" ha puntato: "+bidAndTax+" fiches");
-			else
-				this.view.setText("\n"+this.playerName+" ha passato il turno");
 		} catch (BidIncorrectException e) {
 			System.out.println("\n numero inserito non corretto");
-			this.view.numberIncorrect();
-			this.view.setText("\n"+this.playerName+" ha passato il turno");
+			this.view.numberIncorrect(e.getMessage());
 		}
 	}
 
@@ -197,11 +197,10 @@ public class PokerGame implements IndianPokerViewObserver{
 			this.model.bid(0); // paga tassa e passa
 		} catch (BidIncorrectException e) {
 			System.out.println("\n numero inserito non corretto");
-			this.view.numberIncorrect();
+			this.view.numberIncorrect(e.getMessage());
 		}
 		
 		System.out.println("passa il turno");
-		this.view.setText("\n"+this.playerName+" ha passato il turno");	
 	}
 
 	@Override
@@ -213,5 +212,4 @@ public class PokerGame implements IndianPokerViewObserver{
 		PokerGame pockerIndianoApp = new PokerGame();
 		pockerIndianoApp.play();
 	}
-
 }

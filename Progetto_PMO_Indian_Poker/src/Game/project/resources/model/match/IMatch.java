@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import Game.project.resources.model.characters.Player;
 import Game.project.resources.model.elements.GameStopwatch;
-import Game.project.resources.model.elements.GameTimer;
 import Game.project.resources.model.enums.Result;
 
 public interface IMatch {
