@@ -71,21 +71,21 @@ public class PokerGameView extends JFrame implements IPokerGameView {
 
         // Creazione e configurazione dei pulsanti
         betButton = new JButton(new ImageIcon("img/button.png"));
-        configureButton(betButton, Color.GREEN);
+        configureButton(betButton);
         JLabel betLabel = new JLabel("Puntare", SwingConstants.CENTER);
         betLabel.setForeground(Color.WHITE);
         betButton.setLayout(new BorderLayout());
         betButton.add(betLabel, BorderLayout.NORTH);
 
         foldButton = new JButton(new ImageIcon("img/button.png"));
-        configureButton(foldButton, Color.CYAN);
+        configureButton(foldButton);
         JLabel foldLabel = new JLabel("Foldare", SwingConstants.CENTER);
         foldLabel.setForeground(Color.WHITE);
         foldButton.setLayout(new BorderLayout());
         foldButton.add(foldLabel, BorderLayout.NORTH);
 
         quitButton = new JButton(new ImageIcon("img/button.png"));
-        configureButton(quitButton, Color.RED);
+        configureButton(quitButton);
         JLabel quitLabel = new JLabel("Quittare", SwingConstants.CENTER);
         quitLabel.setForeground(Color.WHITE);
         quitButton.setLayout(new BorderLayout());
@@ -137,11 +137,10 @@ public class PokerGameView extends JFrame implements IPokerGameView {
     }
 	
 	// Metodo per configurare i pulsanti
-	private void configureButton(JButton button, Color backgroundColor) {
+	private void configureButton(JButton button) {
 	    button.setFocusPainted(false);
 	    button.setContentAreaFilled(false);
 	    button.setBorderPainted(false);
-	    button.setBackground(backgroundColor);
 	}
     
 	// Metodo di start della view
